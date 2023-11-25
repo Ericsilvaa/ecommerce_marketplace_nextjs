@@ -9,6 +9,7 @@ import { Product } from "use-shopping-cart/core";
 
 export async function POST(req: NextRequest) {
   try {
+    // cartDetails: intercepting route post to get products in body
     const cartDetails = await req.json()
     const baseUrl = req.headers.get("origin")
 
@@ -16,6 +17,9 @@ export async function POST(req: NextRequest) {
       expand: ['data.default_price']
     })
 
+    // transform product that took the stripe inventory
+    // and i'm going to transform it to get the same thing 
+    // with our application
     const products = stripeInventory.data.map((p: Stripe.Product): Product => {
       return {
         id: p.id.toString(),
@@ -28,10 +32,19 @@ export async function POST(req: NextRequest) {
 
     const line_items = validateCartItems(products, cartDetails)
 
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      payment_method_types: ['card'],
+      line_items: line_items,
+      success_url: `${baseUrl}/success/{CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/cart`
+    })
+
+    return NextResponse.json(session, { status: 200 })
+
   } catch (error) {
     console.log(error)
   }
 
 
-  return NextResponse.json({}, { status: 200 })
 }

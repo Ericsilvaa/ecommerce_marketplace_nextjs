@@ -37,15 +37,17 @@ const CartPage = () => {
   }
 
   return (
-    <section className="flex flex-col items-center justify-center">
+    <section className="container flex flex-col my-2 space-y-2">
       {cartDetails &&
+        // get key of all object
         Object.keys(cartDetails).map((key) => (
           <Card key={key}>
             <CardHeader>
-              <CardTitle className="tracking-wide">
+              <CardTitle className="tracking-wider">
+                {/* cartDetails on position key with value name and quantity*/}
                 {cartDetails[key].name} {cartDetails[key].quantity}
               </CardTitle>
-              <CardDescription className="text-md tracking-wide">
+              <CardDescription className="text-md tracking-wider">
                 {cartDetails[key].description}
               </CardDescription>
             </CardHeader>
@@ -99,3 +101,8 @@ const CartPage = () => {
 };
 
 export default CartPage;
+
+// Action's Page
+// 1. Show Products
+// 2. show details product list
+// 3. redirect to page to finish buy action
